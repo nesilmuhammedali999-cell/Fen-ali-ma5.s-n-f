@@ -1,0 +1,707 @@
+[fen-elektrik-calisma-programi.html](https://github.com/user-attachments/files/34766702/fen-elektrik-calisma-programi.html)
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fen • Yaşamımızdaki Elektrik</title>
+<style>
+:root{--bg:#f3f5fc;--card:#fff;--ink:#1b2140;--muted:#667096;--p:#5b5bf0;--p2:#9a5cf6;--cy:#18b6d9;--ok:#16a34a;--bad:#e11d48;--warn:#f59e0b;--line:#e3e7f5;--sh:0 8px 28px rgba(45,55,130,.11);--r:18px}
+[data-theme=dark]{--bg:#0f1226;--card:#1b2042;--ink:#eef0ff;--muted:#a3abd6;--line:#2b3263;--sh:0 8px 28px rgba(0,0,0,.4)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"Segoe UI",Inter,system-ui,-apple-system,Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;
+background-image:radial-gradient(900px 500px at 100% -10%,rgba(154,92,246,.14),transparent),radial-gradient(800px 500px at -10% 10%,rgba(24,182,217,.14),transparent);background-attachment:fixed;-webkit-tap-highlight-color:transparent}
+h1,h2,h3,h4,p{margin:0}
+button{font:inherit;cursor:pointer}
+.top{position:sticky;top:0;z-index:500;display:flex;align-items:center;gap:12px;padding:10px 16px;background:color-mix(in srgb,var(--card) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.iconbtn{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:20px;display:grid;place-items:center;box-shadow:var(--sh)}
+.top h1{font-size:17px;font-weight:800;letter-spacing:.2px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top h1 span{background:linear-gradient(90deg,var(--p),var(--p2),var(--cy));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hp{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--muted)}
+.hp .bar{width:90px}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--p),var(--cy));border-radius:99px;transition:width .5s}
+#scrim{position:fixed;inset:0;background:rgba(10,14,40,.45);opacity:0;pointer-events:none;transition:.25s;z-index:1000}
+#scrim.on{opacity:1;pointer-events:auto}
+#drawer{position:fixed;top:0;left:0;bottom:0;width:300px;max-width:86vw;background:var(--card);z-index:1001;transform:translateX(-102%);transition:transform .28s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;box-shadow:var(--sh);overflow-y:auto}
+#drawer.on{transform:none}
+.dhead{padding:22px 20px;color:#fff;background:linear-gradient(135deg,var(--p),var(--p2) 60%,var(--cy))}
+.dhead b{font-size:20px;display:block}.dhead small{opacity:.9}
+.ng{padding:10px 12px 2px}
+.ng h6{margin:10px 8px 6px;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+.ni{display:flex;align-items:center;gap:12px;width:100%;padding:11px 12px;border:0;background:none;color:var(--ink);border-radius:12px;font-size:15px;text-align:left}
+.ni:hover{background:var(--bg)}
+.ni.act{background:linear-gradient(90deg,rgba(91,91,240,.16),rgba(24,182,217,.10));font-weight:700;color:var(--p)}
+.ni .e{width:28px;text-align:center;font-size:19px}
+main{max-width:1020px;margin:0 auto;padding:18px 16px 110px}
+.phead{display:flex;align-items:center;gap:14px;margin:6px 0 16px}
+.pico{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-size:28px;color:#fff;background:linear-gradient(135deg,var(--p),var(--p2));box-shadow:var(--sh)}
+.phead h2{font-size:24px}.phead p{color:var(--muted);font-size:14px;margin-top:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--sh);margin-bottom:16px}
+.card h3{font-size:18px;margin-bottom:10px}.card h4{font-size:16px;margin-bottom:6px}
+.card p{line-height:1.6;color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.two{grid-template-columns:1fr}.hp .bar{display:none}.top h1{font-size:15px}}
+.btn{border:0;border-radius:12px;padding:11px 18px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--p),var(--p2));box-shadow:0 6px 16px rgba(91,91,240,.3);transition:.15s}
+.btn:hover{transform:translateY(-1px)}.btn:active{transform:none}
+.btn.ghost{background:var(--bg);color:var(--ink);box-shadow:none;border:1px solid var(--line)}
+.btn.sm{padding:7px 12px;font-size:13px;border-radius:10px}
+.btn.ok{background:linear-gradient(135deg,#16a34a,#22c55e)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hero{display:flex;gap:20px;align-items:center;flex-wrap:wrap;color:#fff;border:0;background:linear-gradient(135deg,#4f46e5,#9a5cf6 55%,#18b6d9)}
+.hero h2{font-size:26px;margin-bottom:6px}.hero p{color:#fff;opacity:.92}
+.ring{--v:0;width:104px;height:104px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#fff calc(var(--v)*1%),rgba(255,255,255,.25) 0);flex:none}
+.ring b{width:80px;height:80px;border-radius:50%;display:grid;place-items:center;background:#5f55f2;font-size:22px}
+.tile{display:flex;flex-direction:column;gap:6px;text-align:left;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:16px;border-radius:var(--r);box-shadow:var(--sh);transition:.18s}
+.tile:hover{transform:translateY(-3px);border-color:var(--p)}
+.tile .e{font-size:30px}.tile b{font-size:16px}.tile small{color:var(--muted);line-height:1.4}
+.day{border-left:5px solid var(--p)}
+.day.next{border-left-color:var(--warn);box-shadow:0 0 0 2px rgba(245,158,11,.35),var(--sh)}
+.day.full{border-left-color:var(--ok)}
+.task{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px dashed var(--line)}
+.task input{width:20px;height:20px;accent-color:var(--ok)}
+.task span{flex:1;font-size:14.5px}
+.task.done span{text-decoration:line-through;color:var(--muted)}
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:800;background:rgba(245,158,11,.18);color:#b45309}
+/* topic */
+.slide .em{font-size:34px;margin-bottom:6px}
+.slide p{font-size:14.5px;margin:6px 0 10px}
+.player{border-radius:16px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(160deg,#1e1b4b,#312e81 55%,#0e7490);color:#fff}
+.pstage{display:flex;gap:18px;align-items:center;min-height:170px;padding:24px}
+.pstage.pop{animation:pop .5s}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.pem{font-size:64px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.4))}
+.pstage h4{font-size:21px;margin-bottom:8px}.pstage p{color:#e8eaff;line-height:1.6;font-size:15.5px}
+.pctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 16px;background:rgba(0,0,0,.28)}
+.pctl .btn{box-shadow:none}
+.pctl select{padding:7px;border-radius:9px;border:0;font:inherit}
+.pdots{display:flex;gap:6px;flex:1;min-width:80px}.pdots i{flex:1;height:6px;border-radius:9px;background:rgba(255,255,255,.25)}
+.pdots i.on{background:#ffd60a}.pdots i.done{background:#5eead4}
+.vid{aspect-ratio:16/9;width:100%;border:0;border-radius:14px;background:#000}
+.vph{display:grid;place-items:center;text-align:center;gap:10px;padding:26px;border:2px dashed var(--line);border-radius:14px;background:var(--bg)}
+input[type=text],input[type=password],textarea,select.f{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+/* drag */
+.drag{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.ghost{position:fixed;z-index:700;pointer-events:none;opacity:.92;transform:scale(1.06) rotate(-2deg);box-shadow:0 14px 30px rgba(0,0,0,.35)}
+.dragging{opacity:.35}
+.mchip{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:14px;background:var(--bg);border:2px solid var(--line);font-weight:700;font-size:15px}
+.mchip.tested{border-color:var(--ok)}
+.tray{display:flex;gap:10px;flex-wrap:wrap;align-items:center;min-height:56px}
+.dz{border:2.5px dashed var(--line);border-radius:14px;transition:.15s}
+.dz.over{border-color:var(--p);background:rgba(91,91,240,.12);transform:scale(1.02)}
+.circuit{position:relative;max-width:660px;margin:0 auto;aspect-ratio:640/330}
+.circuit svg.wires{position:absolute;inset:0;width:100%;height:100%}
+.circuit .cb{position:absolute;left:50%;top:-1%;width:15%;transform:translateX(-50%)}
+.circuit .gap{position:absolute;left:35.5%;top:71%;width:29%;height:27%;display:grid;place-items:center;font-size:13px;color:var(--muted);text-align:center;background:color-mix(in srgb,var(--card) 70%,transparent)}
+.bulb{display:block;margin:0 auto;transition:filter .3s}
+.flow{display:none;fill:none;stroke:#ffd60a;stroke-width:6;stroke-linecap:round;stroke-dasharray:2 18;animation:dm .7s linear infinite;filter:drop-shadow(0 0 5px #ffb703)}
+.circuit.on .flow{display:block}
+@keyframes dm{to{stroke-dashoffset:-20}}
+.log{width:100%;border-collapse:collapse;font-size:14px}
+.log td,.log th{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left}
+.bin{display:flex;flex-wrap:wrap;gap:8px;min-height:120px;padding:10px;align-content:flex-start}
+.basket{padding:12px}
+.basket h4{text-align:center;font-size:17px}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.slot{min-height:84px;display:grid;place-items:center;padding:10px;margin:10px 0;text-align:center;color:var(--muted);font-size:14px}
+.wireitem{display:inline-flex;flex-direction:column;align-items:center;gap:6px;padding:10px 12px;border-radius:14px;background:var(--bg);border:2px solid var(--line)}
+.wireitem small{font-weight:700;font-size:12.5px}
+.wbar{border-radius:99px;box-shadow:inset 0 -2px 3px rgba(0,0,0,.25),inset 0 2px 2px rgba(255,255,255,.4)}
+.rbar{display:flex;justify-content:space-between;font-size:13.5px;color:var(--muted)}
+.rbar b{color:var(--ink)}
+.msgbox{padding:12px 14px;border-radius:12px;line-height:1.55;font-size:14.5px;background:var(--bg);border-left:5px solid var(--p)}
+.msgbox.ok{border-left-color:var(--ok);background:rgba(22,163,74,.1)}
+.msgbox.bad{border-left-color:var(--bad);background:rgba(225,29,72,.08)}
+.msgbox.warn{border-left-color:var(--warn);background:rgba(245,158,11,.12)}
+.rail{position:relative;height:64px;margin:20px 12px 8px;border-radius:14px;border:3px solid #7c86ad;background:repeating-linear-gradient(90deg,#c58a4a 0 6px,#8a5a28 6px 9px);touch-action:none;cursor:pointer}
+.knob{position:absolute;top:-14px;width:46px;height:90px;margin-left:-23px;border-radius:12px;background:linear-gradient(135deg,var(--p),var(--p2));display:grid;place-items:center;color:#fff;font-size:22px;box-shadow:0 8px 18px rgba(0,0,0,.35);cursor:grab}
+.rlabels{display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:var(--muted);padding:0 6px}
+.rhtop{display:flex;gap:24px;align-items:center;flex-wrap:wrap;justify-content:center}
+.reads{display:grid;gap:8px;font-size:15px}
+.reads b{font-size:20px;color:var(--p)}
+.mcard{display:flex;gap:12px;align-items:center;padding:12px;margin-bottom:10px;min-height:70px}
+.mcard .dd{flex:1;font-size:14.5px;line-height:1.45}
+.mcard .name{min-width:150px;min-height:44px;display:grid;place-items:center;border-radius:12px;font-weight:800;color:var(--muted);font-size:13px}
+.mcard.right{border-color:var(--ok);background:rgba(22,163,74,.1)}
+/* quiz */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-weight:600;font-size:14px}
+.chip.on{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border-color:transparent}
+.qtext{font-size:18px;line-height:1.6;font-weight:600;margin:14px 0;white-space:pre-line}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:center;text-align:left;padding:13px 14px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font-size:15.5px}
+.opt b{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--card);border:2px solid var(--line);font-size:13px;flex:none}
+.opt:hover{border-color:var(--p)}
+.opt.right{border-color:var(--ok);background:rgba(22,163,74,.14)}
+.opt.wrong{border-color:var(--bad);background:rgba(225,29,72,.12)}
+.stars{font-size:38px;letter-spacing:4px}
+/* credit, fabs */
+#credit{position:fixed;left:6px;bottom:3px;font-size:9px;opacity:.55;z-index:2000;pointer-events:none;color:var(--ink)}
+.fab{position:fixed;bottom:18px;width:56px;height:56px;border-radius:50%;border:0;display:grid;place-items:center;z-index:950;box-shadow:0 10px 26px rgba(40,50,130,.35);transition:.2s}
+.fab:hover{transform:scale(1.07)}
+#gemFab{right:18px;background:#fff;border:1px solid var(--line)}
+[data-theme=dark] #gemFab{background:#232a55}
+#penFab{right:84px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-size:24px}
+#penFab.on{outline:4px solid rgba(239,68,68,.35)}
+#chat{position:fixed;right:18px;bottom:86px;width:370px;height:520px;max-height:calc(100vh - 110px);z-index:960;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 24px 60px rgba(20,25,80,.35);overflow:hidden;transform-origin:bottom right;transform:scale(.6);opacity:0;pointer-events:none;transition:.22s cubic-bezier(.2,.9,.3,1.2)}
+#chat.on{transform:none;opacity:1;pointer-events:auto}
+@media(max-width:520px){#chat{right:8px;left:8px;width:auto;bottom:80px}}
+.chead{display:flex;align-items:center;gap:10px;padding:12px 14px;color:#fff;background:linear-gradient(135deg,#4f46e5,#9a5cf6 60%,#18b6d9)}
+.chead b{display:block;font-size:15px}.chead small{opacity:.9;font-size:11.5px}
+.chead .x{margin-left:auto;display:flex;gap:6px}
+.chead button{width:30px;height:30px;border-radius:9px;border:0;background:rgba(255,255,255,.2);color:#fff;font-size:15px}
+.chatmsgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:9px;background:var(--bg)}
+.msg{max-width:88%;padding:10px 13px;border-radius:16px;font-size:14px;line-height:1.55;word-wrap:break-word}
+.msg.user{align-self:flex-end;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border-bottom-right-radius:5px}
+.msg.ai{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:5px}
+.msg.sys{align-self:center;max-width:96%;background:rgba(24,182,217,.12);border:1px solid rgba(24,182,217,.35);font-size:13px}
+.typing{display:flex;gap:4px}.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:bl 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bl{50%{transform:translateY(-5px);opacity:.4}}
+.quick{display:flex;gap:6px;overflow-x:auto;padding:8px 10px 0;background:var(--card)}
+.quick button{white-space:nowrap;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:6px 11px;border-radius:99px;font-size:12.5px}
+.cin{display:flex;gap:8px;padding:10px;background:var(--card)}
+.cin textarea{resize:none;height:42px;padding:10px 12px}
+.cin button{width:46px;border:0;border-radius:12px;color:#fff;font-size:18px;background:linear-gradient(135deg,var(--p),var(--p2))}
+.bigchat{height:460px;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.modal{position:fixed;inset:0;z-index:3000;background:rgba(10,14,40,.6);display:grid;place-items:center;padding:16px}
+.modal .card{max-width:520px;width:100%;margin:0;max-height:90vh;overflow:auto}
+.modal li{margin:8px 0;line-height:1.5}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(30px);opacity:0;z-index:2500;background:#1b2140;color:#fff;padding:11px 18px;border-radius:14px;font-size:14px;transition:.3s;pointer-events:none;max-width:92vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%);pointer-events:auto}
+#toast button{margin-left:10px;border:0;border-radius:8px;padding:4px 10px;font-weight:700}
+/* pen */
+#penCanvas{position:fixed;inset:0;z-index:800;touch-action:none;pointer-events:none}
+#penBar{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:900;display:none;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;padding:8px 12px;border-radius:18px;background:var(--card);border:1px solid var(--line);box-shadow:0 14px 34px rgba(20,25,80,.35);max-width:96vw}
+#penBar.on{display:flex}
+#penBar button{width:38px;height:38px;border-radius:11px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font-size:17px}
+#penBar button.on{border-color:var(--p);background:rgba(91,91,240,.18)}
+.sw{width:26px!important;height:26px!important;border-radius:50%!important;border:3px solid #fff!important;box-shadow:0 0 0 1px var(--line)}
+.sw.on{box-shadow:0 0 0 3px var(--p)!important}
+#penBar label{font-size:12px;display:flex;align-items:center;gap:5px;color:var(--muted)}
+#penBar input[type=range]{width:80px}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="iconbtn" id="menuBtn" aria-label="Menü">☰</button>
+  <h1><span>⚡ Yaşamımızdaki Elektrik</span> • Fen Bilimleri</h1>
+  <div class="hp"><span id="hpTxt">%0</span><div class="bar"><i id="hpBar"></i></div></div>
+  <button class="iconbtn" id="themeBtn" aria-label="Tema">🌙</button>
+</header>
+<div id="scrim"></div>
+<nav id="drawer"></nav>
+<main id="view"></main>
+
+<canvas id="penCanvas"></canvas>
+<div id="penBar">
+  <button data-tool="pen" class="on" title="Kalem">✏️</button>
+  <button data-tool="eraser" title="Silgi">🧽</button>
+  <button data-tool="hand" title="Sayfayı kullan (dokun/kaydır)">👆</button>
+  <button class="sw on" data-c="#e11d48" style="background:#e11d48"></button>
+  <button class="sw" data-c="#2563eb" style="background:#2563eb"></button>
+  <button class="sw" data-c="#16a34a" style="background:#16a34a"></button>
+  <button class="sw" data-c="#111827" style="background:#111827"></button>
+  <button class="sw" data-c="#f59e0b" style="background:#f59e0b"></button>
+  <input type="range" id="penSize" min="1" max="18" value="4" title="Kalınlık">
+  <label title="Parmak ve fare çizmez; sadece e-kalem çizer"><input type="checkbox" id="penOnly"> Sadece e-kalem</label>
+  <button id="penUndo" title="Geri al">↩️</button>
+  <button id="penClear" title="Hepsini sil">🗑️</button>
+  <button id="penClose" title="Kapat">✕</button>
+</div>
+
+<button class="fab" id="penFab" title="E-kalem ile yaz / çiz">✏️</button>
+<button class="fab" id="gemFab" title="Yapay zekaya sor">
+  <svg width="30" height="30" viewBox="0 0 28 28"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4285f4"/><stop offset=".55" stop-color="#9b72cb"/><stop offset="1" stop-color="#d96570"/></linearGradient></defs><path fill="url(#gg)" d="M14 0C14.6 7.6 20.4 13.4 28 14 20.4 14.6 14.6 20.4 14 28 13.4 20.4 7.6 14.6 0 14 7.6 13.4 13.4 7.6 14 0Z"/></svg>
+</button>
+<div id="chat">
+  <div class="chead">
+    <svg width="26" height="26" viewBox="0 0 28 28"><path fill="#fff" d="M14 0C14.6 7.6 20.4 13.4 28 14 20.4 14.6 14.6 20.4 14 28 13.4 20.4 7.6 14.6 0 14 7.6 13.4 13.4 7.6 14 0Z"/></svg>
+    <div><b>Yapay Zeka Asistanı</b><small id="chatMode">Yerel yardımcı</small></div>
+    <div class="x"><button id="chatInfo" title="Nasıl kullanılır?">?</button><button id="chatClose">✕</button></div>
+  </div>
+  <div class="chatmsgs"></div>
+  <div class="quick" id="quick"></div>
+  <form class="cin"><textarea placeholder="Sorunu yaz…" rows="1"></textarea><button type="submit">➤</button></form>
+</div>
+<div id="toast"></div>
+<div id="credit">by Muhammed Ali Nesil</div>
+
+<script>
+/* ================= YARDIMCILAR ================= */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const mem={};
+const store={get(k,d){try{const v=localStorage.getItem('elk_'+k);return v===null?(k in mem?mem[k]:d):JSON.parse(v)}catch(e){return k in mem?mem[k]:d}},
+set(k,v){mem[k]=v;try{localStorage.setItem('elk_'+k,JSON.stringify(v))}catch(e){}}};
+const norm=s=>String(s).toLocaleLowerCase('tr').replace(/ı/g,'i').replace(/ş/g,'s').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ö/g,'o').replace(/ç/g,'c');
+let toastT;
+function toast(msg,label,fn){const t=$('#toast');t.innerHTML=esc(msg)+(label?`<button>${esc(label)}</button>`:'');if(label)t.querySelector('button').onclick=()=>{t.classList.remove('on');fn&&fn()};t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),label?6000:2800)}
+const head=(ic,t,s)=>`<div class="phead"><div class="pico">${ic}</div><div><h2>${t}</h2><p>${s||''}</p></div></div>`;
+
+/* sürükle-bırak (fare, dokunmatik, e-kalem: pointer events) */
+function enableDrag(root,itemSel,onDrop){
+  root.addEventListener('pointerdown',e=>{
+    const it=e.target.closest(itemSel);if(!it||(e.pointerType==='mouse'&&e.button!==0))return;
+    e.preventDefault();
+    const r=it.getBoundingClientRect(),g=it.cloneNode(true);
+    g.classList.add('ghost');g.style.width=r.width+'px';g.style.left=r.left+'px';g.style.top=r.top+'px';
+    document.body.appendChild(g);it.classList.add('dragging');
+    const dx=e.clientX-r.left,dy=e.clientY-r.top;let hover=null;
+    const zoneAt=(x,y)=>{g.style.display='none';const el=document.elementFromPoint(x,y);g.style.display='';return el&&el.closest('[data-drop]')};
+    const mv=ev=>{g.style.left=(ev.clientX-dx)+'px';g.style.top=(ev.clientY-dy)+'px';const z=zoneAt(ev.clientX,ev.clientY);if(z!==hover){hover&&hover.classList.remove('over');hover=z;hover&&hover.classList.add('over')}};
+    const up=ev=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);
+      const z=zoneAt(ev.clientX,ev.clientY);g.remove();it.classList.remove('dragging');hover&&hover.classList.remove('over');
+      if(z&&ev.type==='pointerup')onDrop(it,z)};
+    addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',up);
+  });
+}
+
+/* ampul */
+function bulbHTML(w=90){return `<svg class="bulb" viewBox="0 0 100 120" style="width:${w}px;max-width:100%"><circle class="halo" cx="50" cy="46" r="48" fill="#ffe36e" fill-opacity="0"/><path class="glass" d="M50 6C25 6 14 26 14 44c0 16 10 24 16 36v8h40v-8c6-12 16-20 16-36C86 26 75 6 50 6Z" fill="#ffd60a" fill-opacity=".1" stroke="#9aa3c7" stroke-width="3"/><path class="fil" d="M40 88l2-26 8 10 8-10 2 26" fill="none" stroke="#6b7280" stroke-width="3" stroke-linejoin="round"/><rect x="32" y="88" width="36" height="8" rx="2" fill="#9aa3c7"/><rect x="34" y="97" width="32" height="8" rx="2" fill="#7c86ad"/><rect x="40" y="106" width="20" height="8" rx="4" fill="#5d6690"/></svg>`}
+function setBulb(el,b){const s=el.matches&&el.matches('svg')?el:el.querySelector('svg');if(!s)return;
+  s.querySelector('.glass').setAttribute('fill-opacity',(.08+.92*b).toFixed(2));
+  s.querySelector('.halo').setAttribute('fill-opacity',(b*.55).toFixed(2));
+  s.querySelector('.fil').setAttribute('stroke',b>.05?'#ff8a00':'#6b7280');
+  s.style.filter=b>.05?`drop-shadow(0 0 ${(4+b*22).toFixed(0)}px rgba(255,200,40,${(.3+b*.65).toFixed(2)}))`:'none'}
+
+
+/* ================= İÇERİK ================= */
+const GEMINI_API_KEY="BURAYA_API_ANAHTARINI_YAZ";
+if(GEMINI_API_KEY&&!GEMINI_API_KEY.startsWith('BURAYA'))store.set('apiKey',GEMINI_API_KEY);
+const TOPICS=[
+{id:'t1',icon:'⚡',title:'Elektrik Devresi ve Devre Elemanları',q:'elektrik devresi devre elemanları pil ampul anahtar fen',slides:[
+['⚡','Elektrik devresi','Elektrik enerjisinin iletilmesini sağlayan ve çeşitli devre elemanlarından oluşan sisteme elektrik devresi denir. Televizyon, bilgisayar, el feneri ve cep telefonu elektrik enerjisiyle çalışır.'],
+['🔋','Pil ve ampul','Pil devreye enerji sağlar; artı (+) ve eksi (−) kutbu vardır. Ampul elektrik enerjisinden yararlanarak ışık verir.'],
+['🔘','Anahtar ve kablo','Anahtar devrenin açılıp kapanmasını sağlar. Bağlantı kablosu devre elemanları arasında bağlantı kurar. Pil yatağı ve duy da yardımcı elemanlardır.'],
+['✅','Kapalı devre','Anahtar kapalıyken devre tamamlanır. Devre doğru kurulmuşsa ampul ışık verir.'],
+['⛔','Açık devre','Anahtar açıkken bağlantı kesilir ve ampul ışık vermez. Pilin yanlış bağlanması ya da kabloların devreyi tamamlamaması da ampulün yanmamasına neden olabilir.']]},
+{id:'t2',icon:'🔣',title:'Semboller ve Devre Şeması',q:'devre elemanları sembolleri devre şeması fen',slides:[
+['🔣','Devre elemanı sembolleri','Pil: biri uzun, biri kısa iki paralel çizgi; uzun çizgi artı, kısa çizgi eksi kutbu gösterir. Ampul: içinde çarpı olan daire. Bağlantı kablosu: düz çizgi. Anahtarın açık ve kapalı hâlleri için ayrı semboller vardır.'],
+['🚫','Sembolü olmayanlar','Pil yatağı ve duyun belirli bir sembolü yoktur. Bütün devre elemanlarının sembolü bulunmaz.'],
+['🌍','Neden sembol kullanırız?','Semboller ortak bir bilimsel dil oluşturur. Devreler daha kolay çizilir ve anlaşılır. Farklı ülkelerdeki insanlar devreyi anlayabilir. Cihaz tamirinde devre şemasından yararlanılır.'],
+['📐','Devre şeması','Bir elektrik devresinin, eleman sembolleriyle çizimle gösterilmesine devre şeması denir. Şemada gerçek eleman resimleri yerine semboller kullanılır; eleman sayısı ve bağlantılar gerçek devreyle aynı olmalıdır.']]},
+{id:'t3',icon:'💡',title:'Ampul Parlaklığını Etkileyen Değişkenler',q:'pil sayısı ampul sayısı ampul parlaklığı fen',slides:[
+['🔋','Pil sayısı','Ampul sayısı sabitken pil sayısı artırılırsa ampuller daha parlak yanar. Pil sayısı fazla olan el fenerinin ampulü daha parlaktır.'],
+['💡','Ampul sayısı','Pil sayısı sabitken ampul sayısı artırılırsa ampullerin parlaklığı azalır. Örneğin bir pil ve üç ampullü devre, bir pil ve iki ampullü devreden daha sönüktür.'],
+['⚖️','Adil karşılaştırma','Karşılaştırılan devrelerde pil ve ampuller özdeş olmalı ve yalnızca araştırılan değişken değiştirilmelidir.']]},
+{id:'t4',icon:'🔬',title:'Bilimsel Deney: Değişkenler',q:'bağımsız bağımlı kontrol edilen değişken fen',slides:[
+['🎛️','Bağımsız değişken','Deneyin sonucunu etkileyen ve araştırmacı tarafından değiştirilen değişkendir. Pil sayısının etkisi araştırılıyorsa bağımsız değişken pil sayısıdır.'],
+['📏','Bağımlı değişken','Deneyde araştırılan ve bağımsız değişkene bağlı olarak değişen durumdur. Bu deneylerde bağımlı değişken ampul parlaklığıdır.'],
+['🔒','Kontrol edilen değişken','Bağımsız değişken dışında deneyi etkileyebilecek diğer değişkenlerin sabit tutulmasıdır. Pil sayısı araştırılırken ampul sayısı, ampul sayısı araştırılırken pil sayısı sabit tutulur.']]},
+{id:'t5',icon:'🧠',title:'Hipotez ve Bilgi İstasyonu',q:'hipotez nedir fen bilimleri livermore ampulü',slides:[
+['🧠','Hipotez','Hipotez, deneyle test edilebilen tahmin veya açıklamadır. Örnek: pil sayısını artırırsam ampul parlaklığı artar. Doğruluğu deney ve gözlemle değerlendirilir.'],
+['🚦','Neden tek değişken?','Aynı anda hem pil hem ampul sayısı değiştirilirse parlaklık farkının hangi nedenden kaynaklandığı anlaşılamaz.'],
+['🏆','Bilgi istasyonu','Amerika’daki Livermore İtfaiye İstasyonunda bir ampul 1901 yılından beri yanıyor. Guinness Rekorlar Kitabına girdi. Bugün ilk üretildiği zamana göre daha az ışık veriyor.']]}];
+const UNIT_TEXT=TOPICS.map(t=>t.title+': '+t.slides.map(s=>s[1]+'. '+s[2]).join(' ')).join('\n');
+const PLAN=[
+{t:'Elektrik Devresi ve Elemanları',tasks:[['Sesli mini ders: Elektrik Devresi','topic:t1','topic',{id:'t1'}],['Etkinlik: Devre laboratuvarı (anahtarı aç-kapat)','act:lab','lab'],['Test: Devre elemanları','quiz:t1','quiz',{tag:'t1'}]]},
+{t:'Semboller',tasks:[['Sesli mini ders: Semboller ve Devre Şeması','topic:t2','topic',{id:'t2'}],['Etkinlik: Sembol eşleştirme','act:symbol','symbol'],['Test: Semboller','quiz:t2','quiz',{tag:'t2'}]]},
+{t:'Devre Şeması ve Tekrar',tasks:[['Konu tekrarı: Devre şeması','topic:t2','topic',{id:'t2'}],['Etkinlik: Sembol eşleştirmeyi tekrar et','act:symbol2','symbol'],['Yapay zekâya anlamadığın bir şeyi sor','ai:ask','ai']]},
+{t:'Ampul Parlaklığı',tasks:[['Sesli mini ders: Ampul Parlaklığı','topic:t3','topic',{id:'t3'}],['Etkinlik: Pil ve ampul sayısını değiştir','act:lab2','lab'],['Test: Ampul parlaklığı','quiz:t3','quiz',{tag:'t3'}]]},
+{t:'Değişkenler',tasks:[['Sesli mini ders: Değişkenler','topic:t4','topic',{id:'t4'}],['Etkinlik: Değişken sepeti','act:vars','vars'],['Test: Değişkenler','quiz:t4','quiz',{tag:'t4'}]]},
+{t:'Hipotez ve Adil Deney',tasks:[['Sesli mini ders: Hipotez ve Bilgi İstasyonu','topic:t5','topic',{id:'t5'}],['Etkinlik: Hangisi daha parlak?','act:cmp','cmp'],['Test: Hipotez','quiz:t5','quiz',{tag:'t5'}]]},
+{t:'Genel Tekrar ve Deneme',tasks:[['Genel deneme sınavı (karışık sorular)','quiz:all','quiz',{tag:'all',n:15}],['Yanlışlarını yapay zekâya sor','ai:ask2','ai'],['Etkinlikleri hızlıca tekrar et','act:cmp2','cmp']]}];
+const PLAN_TASKS=[];PLAN.forEach((d,di)=>d.tasks.forEach((t,ti)=>PLAN_TASKS.push({id:di+'-'+ti,day:di,x:t[0],k:t[1],r:t[2],p:t[3]||{}})));
+function planStats(){const done=store.get('done',{});const n=PLAN_TASKS.length,c=PLAN_TASKS.filter(t=>done[t.id]).length;return{n,c,pct:Math.round(c/n*100),done}}
+function updateProgress(){const s=planStats();$('#hpTxt').textContent='%'+s.pct;$('#hpBar').style.width=s.pct+'%'}
+function markDone(key){const done=store.get('done',{});const t=PLAN_TASKS.find(t=>t.k===key&&!done[t.id]);if(t){done[t.id]=true;store.set('done',done);updateProgress();toast('✅ Çalışma programında bir görev tamamlandı!')}}
+
+
+/* ================= SORU ÜRETİCİ ================= */
+const mcq=(q,c,w,e,t)=>{const o=shuffle([c,...w]);return{q,o,a:o.indexOf(c),e,t}};
+const STAT=[
+['Elektrik enerjisinin iletilmesini sağlayan ve devre elemanlarından oluşan sisteme ne denir?','Elektrik devresi','Devre şeması|Hipotez|Açık devre','Devre elemanlarından oluşan ve elektriği ileten sisteme elektrik devresi denir.','t1'],
+['Devreye enerji sağlayan eleman hangisidir?','Pil','Ampul|Anahtar|Bağlantı kablosu','Pil devreye enerji verir.','t1'],
+['Elektrik enerjisinden yararlanarak ışık veren devre elemanı hangisidir?','Ampul','Pil|Anahtar|Bağlantı kablosu','Ampul elektrik enerjisini ışığa çevirir.','t1'],
+['Devrenin açılıp kapanmasını sağlayan eleman hangisidir?','Anahtar','Pil|Ampul|Bağlantı kablosu','Anahtar devreyi açar veya kapatır.','t1'],
+['Devre elemanları arasında bağlantı kuran eleman hangisidir?','Bağlantı kablosu','Anahtar|Pil|Ampul','Kablolar elemanları birbirine bağlar.','t1'],
+['Anahtar açıkken ampul için ne söylenebilir?','Işık vermez, çünkü devre açıktır.','Işık verir.|Daha parlak yanar.|Pil hemen biter.','Açık devrede bağlantı kesilir.','t1'],
+['Anahtar kapalı ve devre doğru kurulmuşsa ne olur?','Ampul ışık verir.','Ampul ışık vermez.|Devre açık olur.|Pilin kutupları kaybolur.','Kapalı devrede elektrik geçer.','t1'],
+['Pil yatağı ve duy devrede nasıl elemanlardır?','Yardımcı elemanlar','Temel enerji kaynakları|Işık veren elemanlar|Sembolü en belirgin elemanlar','Pil yatağı ve duy yardımcı elemanlardır.','t1'],
+['Pil sembolündeki uzun çizgi neyi gösterir?','Pozitif (+) kutbu','Negatif (−) kutbu|Anahtarı|Ampulü','Uzun çizgi artı, kısa çizgi eksi kutuptur.','t2'],
+['Ampul sembolü nasıl gösterilir?','İçinde çarpı işareti olan daire','İçinde artı olan kare|Düz bir çizgi|İki paralel çizgi','Ampul: çarpılı daire.','t2'],
+['Devre elemanlarının sembollerle gösterilmesinin en önemli amacı nedir?','Ortak bir bilimsel dil oluşturmak','Pilleri uzun süre kullanmak|Ampulü daha parlak yakmak|Devreyi süslemek','Semboller herkesin aynı şekilde anlamasını sağlar.','t2'],
+['Devre şeması nedir?','Devrenin eleman sembolleriyle çizimle gösterilmesi','Devrenin gerçek fotoğrafı|Ampulün parlaklığı|Deneyle test edilen tahmin','Şemada resimler yerine semboller kullanılır.','t2'],
+['Devre şemasında nelerin doğru gösterilmesi gerekir?','Eleman sayılarının ve bağlantıların','Eleman renklerinin|Eleman boyutlarının|Pilin markasının','Şema gerçek devreyle aynı sayı ve bağlantıyı göstermelidir.','t2'],
+['Bağlantı noktaları arasında açıklık bulunan anahtar sembolü neyi gösterir?','Açık anahtarı','Kapalı anahtarı|Pili|Ampulü','Açıklık, devrenin açık olduğunu gösterir.','t2'],
+['Ampul sayısı sabitken pil sayısı artırılırsa ampul parlaklığı ne olur?','Artar','Azalır|Değişmez|Ampul söner','Pil sayısı arttıkça parlaklık artar.','t3'],
+['Pil sayısı sabitken ampul sayısı artırılırsa ampullerin parlaklığı ne olur?','Azalır','Artar|Değişmez|İki katına çıkar','Ampul sayısı arttıkça parlaklık azalır.','t3'],
+['Özdeş ampullü iki el fenerinden pil sayısı fazla olanın ampulü nasıl yanar?','Daha parlak','Daha sönük|Aynı parlaklıkta|Hiç yanmaz','Daha çok pil, daha parlak ampul demektir.','t3'],
+['Devreleri karşılaştırırken özdeş pil ve ampul kullanmanın nedeni nedir?','Sonucu yalnızca incelenen değişkene bağlayabilmek','Devreyi güzel göstermek|Pilleri tasarruflu kullanmak|Anahtarı kolay kapatmak','Başka farklar olursa sonucun nedeni anlaşılmaz.','t3'],
+['Pil sayısının etkisi araştırılırken bağımsız değişken hangisidir?','Pil sayısı','Ampul parlaklığı|Ampul sayısı|Anahtar','Araştırmacının değiştirdiği değişken bağımsızdır.','t4'],
+['Pil sayısının etkisi araştırılırken bağımlı değişken hangisidir?','Ampul parlaklığı','Pil sayısı|Ampul sayısı|Kablo uzunluğu','Ölçülen sonuç bağımlı değişkendir.','t4'],
+['Pil sayısının etkisi araştırılırken kontrol edilen değişken hangisidir?','Ampul sayısı','Pil sayısı|Ampul parlaklığı|Hipotez','Sabit tutulan değişken kontrol edilendir.','t4'],
+['Ampul sayısının etkisi araştırılırken hangisi sabit tutulmalıdır?','Pil sayısı','Ampul sayısı|Ampul parlaklığı|Anahtarın rengi','Araştırılan dışındaki değişken sabit tutulur.','t4'],
+['Deneyle test edilebilen tahmine ne denir?','Hipotez','Sonuç|Sembol|Devre şeması','Hipotez test edilebilir bir tahmindir.','t5'],
+['Pil ve ampul sayısı aynı anda değiştirilirse ne olur?','Parlaklık farkının nedeni anlaşılamaz.','Sonuç çok net olur.|Ampul söner.|Devre kapanır.','Tek seferde yalnızca bir değişken değiştirilmelidir.','t5'],
+['Livermore İtfaiye İstasyonundaki ampul hangi yıldan beri yanıyor?','1901','1801|1951|2001','Bu ampul Guinness Rekorlar Kitabına girmiştir.','t5'],
+['Aşağıdakilerden hangisi bir hipotezdir?','Pil sayısını artırırsam ampul parlaklığı artar.','Ampul ışık verir.|Pil devreye enerji sağlar.|Anahtar kapalıdır.','Hipotez, deneyle sınanabilen bir tahmindir.','t5']
+].map(r=>[r[0],r[1],r[2].split('|'),r[3],r[4]]);
+function genBright(){const pf=rnd(0,1);let p1=rnd(1,3),a1=rnd(1,3),p2=p1,a2=a1;if(pf){do a2=rnd(1,3);while(a2===a1)}else{do p2=rnd(1,3);while(p2===p1)}
+  const d=(p,a)=>p+' pil ve '+a+' ampul',b1=p1/a1>p2/a2;
+  return mcq(`Özdeş pil ve ampullerle iki devre kuruluyor. Devre A: ${d(p1,a1)}. Devre B: ${d(p2,a2)}. Hangi devredeki ampuller daha parlak yanar?`,b1?'Devre A':'Devre B',[b1?'Devre B':'Devre A','İkisi de aynı parlaklıkta','Hiçbiri yanmaz'],pf?'Pil sayısı aynıdır; ampul sayısı arttıkça parlaklık azalır.':'Ampul sayısı aynıdır; pil sayısı arttıkça parlaklık artar.','t3')}
+function genVar(){const pil=rnd(0,1),X=pil?['Pil sayısı','Ampul sayısı']:['Ampul sayısı','Pil sayısı'],r=rnd(0,2),N=['Bağımsız değişken','Bağımlı değişken','Kontrol edilen değişken'];
+  return mcq(`Bir öğrenci ${X[0].toLowerCase()}nın ampul parlaklığına etkisini araştırıyor. “${[X[0],'Ampul parlaklığı',X[1]][r]}” bu deneyde hangi değişkendir?`.replace('sayısının','sayısının'),N[r],N.filter((_,i)=>i!==r),'Değiştirilen bağımsız, ölçülen bağımlı, sabit tutulan kontrol edilen değişkendir.','t4')}
+function genSym(){const W=['Pil','Ampul','Anahtar','Bağlantı kablosu'],N=['Pil yatağı','Duy'];
+  return rnd(0,1)?mcq('Aşağıdakilerden hangisinin belirli bir sembolü yoktur?',pick(N),shuffle(W).slice(0,3),'Pil yatağı ve duyun belirli bir sembolü yoktur.','t2'):mcq('Aşağıdakilerden hangisinin belirli bir sembolü vardır?',pick(W),N,'Pil, ampul, anahtar ve kablonun sembolü vardır; pil yatağı ve duyun yoktur.','t2')}
+const GEN=[{t:['t3','t5'],f:genBright},{t:['t4','t5'],f:genVar},{t:['t2'],f:genSym}];
+function buildQuiz(n,tag){
+  const out=[],seen=new Set();let g=0;
+  const gens=GEN.filter(x=>tag==='all'||x.t.includes(tag)),st=STAT.filter(s=>tag==='all'||s[4]===tag);
+  while(out.length<n&&g++<500){
+    const useG=gens.length&&(!st.length||Math.random()<.6);let q;
+    if(useG)q=pick(gens).f();else if(st.length){const s=pick(st);q=mcq(...s)}
+    if(!q||seen.has(q.q))continue;
+    if(tag!=='all'&&q.t&&q.t!==tag&&!(gens.find(x=>x.f&&x.t.includes(tag))&&useG))continue;
+    seen.add(q.q);const fq={q:q.q,o:q.o,a:q.a,e:q.e,t:q.t};out.push(fq)}
+  return out}
+
+
+/* ================= ROTALAR ================= */
+
+let cur={id:'home',p:{}};
+const ROUTES={};
+
+const NAV=[
+ {g:'Genel',items:[{id:'home',e:'🏠',l:'Ana Sayfa'},{id:'plan',e:'📅',l:'Çalışma Programı'}]},
+ {g:'Konu Anlatımı',items:TOPICS.map(t=>({id:'topic',p:{id:t.id},e:t.icon,l:t.title}))},
+ {g:'Etkinlikler',items:[{id:'lab',e:'🔋',l:'Devre Laboratuvarı'},{id:'symbol',e:'🔣',l:'Sembol Eşleştirme'},{id:'vars',e:'🎯',l:'Değişken Sepeti'},{id:'cmp',e:'⚖️',l:'Hangisi Daha Parlak?'}]},
+ {g:'Test',items:[{id:'quiz',e:'📝',l:'Soru Bankası (her seferinde farklı)'}]},
+ {g:'Yardım',items:[{id:'ai',e:'🤖',l:'Yapay Zekâya Sor'},{id:'voice',e:'🎙️',l:'Ses Ayarı (Duygu Eris)'},{id:'guide',e:'ℹ️',l:'Nasıl Kullanılır?'}]}];
+function buildNav(){
+  $('#drawer').innerHTML=`<div class="dhead"><b>⚡ Fen Bilimleri</b><small>6. Ünite: Yaşamımızdaki Elektrik</small></div>`+
+  NAV.map(g=>`<div class="ng"><h6>${g.g}</h6>${g.items.map((it,i)=>`<button class="ni ${cur.id===it.id&&(!it.p||it.p.id===cur.p.id)?'act':''}" data-id="${it.id}" data-p='${JSON.stringify(it.p||{})}'><span class="e">${it.e}</span><span>${it.l}</span></button>`).join('')}</div>`).join('')}
+function openDrawer(o){$('#drawer').classList.toggle('on',o);$('#scrim').classList.toggle('on',o)}
+function go(id,p={}){
+  stopSpeak();cur={id,p};openDrawer(false);clearPen();
+  const v=$('#view');v.innerHTML='';ROUTES[id](v,p);buildNav();scrollTo({top:0});refreshChatCtx()}
+const titleOf=()=>{const n=NAV.flatMap(g=>g.items).find(i=>i.id===cur.id&&(!i.p||i.p.id===cur.p.id));return n?n.l:cur.id};
+
+/* --- Ana sayfa --- */
+
+ROUTES.home=v=>{const s=planStats(),next=PLAN_TASKS.find(t=>!s.done[t.id]);
+  v.innerHTML=`<div class="card hero"><div class="ring" style="--v:${s.pct}"><b>%${s.pct}</b></div><div style="flex:1;min-width:220px"><h2>Merhaba, hoş geldin! 👋</h2><p>6. ünite “Yaşamımızdaki Elektrik” için 7 günlük çalışma programın hazır. Konuları sesli dinle, etkinliklerde sürükle-bırak yap, her seferinde farklı sorularla kendini dene.</p>
+  <div class="row" style="margin-top:14px">${next?`<button class="btn" style="background:#fff;color:#4f46e5" data-go="${next.r}" data-gp='${JSON.stringify(next.p)}'>▶ Sıradaki: ${next.x}</button>`:'<b>🎉 Tüm programı bitirdin!</b>'}<button class="btn ghost" style="background:rgba(255,255,255,.2);color:#fff;border:0" data-go="plan">📅 Programı gör</button></div></div></div>
+  <div class="grid">${[['topic','📚','Konu Anlatımı','Sesli mini dersler ve videolar',{id:'t1'}],['lab','🔋','Devre Laboratuvarı','Pil, ampul ve anahtarla dene'],['symbol','🔣','Sembol Eşleştirme','İsmi doğru sembole sürükle'],['vars','🎯','Değişken Sepeti','Bağımsız, bağımlı, kontrol'],['cmp','⚖️','Hangisi Daha Parlak?','İki devreyi karşılaştır'],['quiz','📝','Soru Bankası','Her seferinde farklı sorular'],['ai','🤖','Yapay Zekâya Sor','Takıldığın yeri sor'],['plan','📅','Çalışma Programı','7 günlük görev listesi']].map(t=>`<button class="tile" data-go="${t[0]}" data-gp='${JSON.stringify(t[4]||{})}'><span class="e">${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`).join('')}</div>`}
+/* --- Program --- */
+ROUTES.plan=v=>{
+  const s=planStats();const next=PLAN_TASKS.find(t=>!s.done[t.id]);
+  v.innerHTML=head('📅','7 Günlük Çalışma Programı','Görevleri tamamladıkça işaretle; etkinlik ve testleri bitirince program kendiliğinden ilerler.')+
+  `<div class="card"><div class="row" style="justify-content:space-between"><b>Genel ilerleme: ${s.c} / ${s.n} görev</b><b>%${s.pct}</b></div><div class="bar" style="margin-top:8px"><i style="width:${s.pct}%"></i></div></div>`+
+  PLAN.map((d,di)=>{const ts=PLAN_TASKS.filter(t=>t.day===di),full=ts.every(t=>s.done[t.id]),isNext=next&&next.day===di;
+    return `<div class="card day ${full?'full':''} ${isNext?'next':''}"><div class="row" style="justify-content:space-between"><h3>${di+1}. Gün – ${d.t}</h3>${full?'<span class="badge" style="background:rgba(22,163,74,.15);color:#15803d">Tamamlandı ✔</span>':isNext?'<span class="badge">Sıradaki</span>':''}</div>
+    ${ts.map(t=>`<div class="task ${s.done[t.id]?'done':''}"><input type="checkbox" data-t="${t.id}" ${s.done[t.id]?'checked':''}><span>${t.x}</span><button class="btn ghost sm" data-go="${t.r}" data-gp='${JSON.stringify(t.p)}'>Git ▸</button></div>`).join('')}</div>`}).join('')+
+  `<button class="btn ghost sm" id="resetPlan">↺ Programı sıfırla</button>`;
+  $$('input[data-t]',v).forEach(c=>c.onchange=()=>{const d=store.get('done',{});d[c.dataset.t]=c.checked;store.set('done',d);updateProgress();ROUTES.plan(v)});
+  $('#resetPlan',v).onclick=()=>{if(confirm('Tüm işaretler silinsin mi?')){store.set('done',{});updateProgress();ROUTES.plan(v)}}}
+
+/* --- Konu --- */
+const ytId=u=>{const m=String(u).match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);return m?m[1]:/^[\w-]{11}$/.test(u.trim())?u.trim():null};
+ROUTES.topic=(v,p)=>{
+  const T=TOPICS.find(t=>t.id===p.id)||TOPICS[0];
+  const vid=store.get('vid_'+T.id,'');
+  v.innerHTML=head(T.icon,T.title,'Konu anlatımı • sesli mini ders • video')+
+  `<div class="card"><h3>🎧 Sesli Mini Ders</h3><div class="player" id="pl"><div class="pstage"></div><div class="pctl"><button class="btn sm" data-a="prev">⏮</button><button class="btn sm" data-a="play">▶ Başlat</button><button class="btn sm" data-a="next">⏭</button><div class="pdots"></div><span class="pcount" style="font-size:13px"></span><select data-a="rate"><option value="0.8">0.8x</option><option value="1" selected>1x</option><option value="1.25">1.25x</option></select></div></div>
+  <p style="font-size:13px;color:var(--muted);margin-top:8px">${elReady()?'🎙️ ElevenLabs sesiyle okunuyor.':(hasTTS?'Tarayıcının Türkçe sesi slaytları okur.':'Bu tarayıcıda sesli okuma desteklenmiyor; slaytlar otomatik ilerler.')} <a href="#" data-go="voice">Ses ayarı (Duygu Eris)</a></p></div>
+  <div class="grid2">${T.slides.map((s,i)=>`<div class="card slide" style="margin:0"><div class="em">${s[0]}</div><h4>${s[1]}</h4><p>${s[2]}</p><button class="btn ghost sm" data-say="${i}">🔊 Dinle</button></div>`).join('')}</div>
+  <div class="card" style="margin-top:16px"><h3>🎬 Video</h3><div id="vbox">${vid?`<iframe class="vid" src="https://www.youtube-nocookie.com/embed/${vid}" allowfullscreen allow="accelerometer;encrypted-media;picture-in-picture"></iframe><div class="row" style="margin-top:10px"><button class="btn ghost sm" id="vdel">Videoyu kaldır</button></div>`:
+  `<div class="vph"><div style="font-size:36px">▶️</div><p>Bu konu için bir YouTube videosu bul, bağlantısını aşağı yapıştır; uygulama içinde oynasın.</p><a class="btn" style="text-decoration:none" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent(T.q)}">YouTube’da ara ↗</a><div class="row" style="width:100%"><input type="text" id="vurl" placeholder="https://www.youtube.com/watch?v=…" style="flex:1;min-width:200px"><button class="btn" id="vset">Yerleştir</button></div></div>`}</div></div>
+  <div class="card"><h3>🚀 Şimdi uygula</h3><div class="row"><button class="btn ok" id="fin">✔ Konuyu tamamladım</button>${({t1:[['lab','🔋 Devre laboratuvarı']],t2:[['symbol','🔣 Sembol eşleştirme']],t3:[['lab','🔋 Devre laboratuvarı'],['cmp','⚖️ Hangisi parlak?']],t4:[['vars','🎯 Değişken sepeti']],t5:[['cmp','⚖️ Hangisi parlak?']]})[T.id].map(a=>`<button class="btn ghost" data-go="${a[0]}">${a[1]}</button>`).join('')}<button class="btn ghost" data-go="quiz" data-gp='{"tag":"${T.id}"}'>📝 Test çöz</button></div></div>`;
+  mountPlayer($('#pl',v),T);
+  $$('[data-say]',v).forEach(b=>b.onclick=()=>speak(spk(T.slides[+b.dataset.say]),1));
+  $('#fin',v).onclick=()=>{markDone('topic:'+T.id);toast('Harika! Şimdi etkinliklere geç 🎉')};
+  const vs=$('#vset',v);if(vs)vs.onclick=()=>{const id=ytId($('#vurl',v).value);if(!id)return toast('Geçerli bir YouTube bağlantısı gir');store.set('vid_'+T.id,id);ROUTES.topic(v,p)};
+  const vd=$('#vdel',v);if(vd)vd.onclick=()=>{store.set('vid_'+T.id,'');ROUTES.topic(v,p)}}
+function mountPlayer(box,T){
+  let i=0,tok=0,rate=1,playing=false;
+  const st=$('.pstage',box),dots=$('.pdots',box),btn=$('[data-a=play]',box);
+  const show=()=>{const s=T.slides[i];st.innerHTML=`<div class="pem">${s[0]}</div><div><h4>${s[1]}</h4><p>${s[2]}</p></div>`;st.classList.remove('pop');void st.offsetWidth;st.classList.add('pop');
+    dots.innerHTML=T.slides.map((_,k)=>`<i class="${k===i?'on':k<i?'done':''}"></i>`).join('');$('.pcount',box).textContent=`${i+1}/${T.slides.length}`};
+  const stop=()=>{tok++;playing=false;stopSpeak();btn.textContent='▶ Başlat'};
+  const play=()=>{const my=++tok;playing=true;btn.textContent='⏸ Duraklat';show();
+    speak(spk(T.slides[i]),rate,()=>{if(my!==tok)return;if(i<T.slides.length-1){i++;setTimeout(()=>{if(my===tok)play()},450)}else{stop();i=0;show();markDone('topic:'+T.id);toast('🎉 Mini ders bitti!')}})};
+  btn.onclick=()=>playing?stop():play();
+  $('[data-a=prev]',box).onclick=()=>{const w=playing;stop();i=Math.max(0,i-1);show();if(w)play()};
+  $('[data-a=next]',box).onclick=()=>{const w=playing;stop();i=Math.min(T.slides.length-1,i+1);show();if(w)play()};
+  $('[data-a=rate]',box).onchange=e=>{rate=+e.target.value};
+  show()}
+
+/* --- Test devresi --- */
+
+/* ================= ETKİNLİKLER ================= */
+const S={pil:'<path d="M0 20h22M32 20h22"/><path d="M22 6v28"/><path d="M32 13v14" stroke-width="5"/>',kablo:'<path d="M2 20h50"/>',ampul:'<path d="M0 20h13M41 20h13"/><circle cx="27" cy="20" r="14"/><path d="M17 10l20 20M37 10L17 30"/>',acik:'<path d="M0 20h12M42 20h12"/><circle cx="12" cy="20" r="2.5"/><circle cx="42" cy="20" r="2.5"/><path d="M12 20l26-14"/>',kapali:'<path d="M0 20h54"/><circle cx="12" cy="20" r="2.5"/><circle cx="42" cy="20" r="2.5"/>'};
+const SN={pil:'Pil',kablo:'Bağlantı kablosu',ampul:'Ampul',acik:'Açık anahtar',kapali:'Kapalı anahtar'};
+const sym=(k,w=100)=>`<svg viewBox="0 0 54 40" width="${w}" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">${S[k]}</svg>`;
+const glow=(p,a)=>.12+.88*Math.min(p/a,3)/3;
+const bulbs=(a,w)=>bulbHTML(w).repeat(a);
+const lit=(root,g)=>$$('.bulb',root).forEach(s=>setBulb(s,g));
+const shk=z=>{z.classList.add('shake');setTimeout(()=>z.classList.remove('shake'),400)};
+ROUTES.lab=v=>{let p=1,a=1,sw=1,n=0,m='Butonlara bas ve parlaklığı izle.';
+  v.innerHTML=head('🔋','Devre Laboratuvarı','Pil ve ampul sayısını değiştir, anahtarı aç-kapat.')+`<div class="card" style="text-align:center"><div class="rhtop" id="bl" style="min-height:130px"></div><div id="rd" style="margin:12px 0;font-weight:700"></div><div class="bar" style="max-width:360px;margin:0 auto 14px"><i id="mt"></i></div><div class="row" style="justify-content:center">${[['p-','Pil −'],['p+','Pil +'],['a-','Ampul −'],['a+','Ampul +'],['s','🔘 Anahtar']].map(b=>`<button class="btn sm" data-c="${b[0]}">${b[1]}</button>`).join('')}</div><div class="msgbox" id="ms" style="margin-top:14px;text-align:left"></div></div>`;
+  const draw=()=>{const g=sw?glow(p,a):0;$('#bl',v).innerHTML=bulbs(a,80);lit(v,g);$('#rd',v).innerHTML=`🔋×${p} pil • 💡×${a} ampul • anahtar ${sw?'kapalı (kapalı devre)':'açık (açık devre)'} • parlaklık %${Math.round(g*100)}`;$('#mt',v).style.width=g*100+'%';$('#ms',v).textContent=m};draw();
+  $('.card',v).onclick=e=>{const b=e.target.closest('[data-c]');if(!b)return;const c=b.dataset.c;
+    if(c==='p+'&&p<3){p++;m='Pil sayısı arttı → ampuller daha parlak (ampul sayısı sabit).'}else if(c==='p-'&&p>1){p--;m='Pil sayısı azaldı → ampuller daha sönük.'}
+    else if(c==='a+'&&a<3){a++;m='Ampul sayısı arttı → ampullerin parlaklığı azaldı (pil sayısı sabit).'}else if(c==='a-'&&a>1){a--;m='Ampul sayısı azaldı → ampuller daha parlak.'}
+    else if(c==='s'){sw^=1;m=sw?'Anahtar kapandı: kapalı devre, ampul ışık veriyor.':'Anahtar açıldı: açık devre, ampul ışık vermiyor.'}else return;
+    draw();if(++n===6)markDone('act:lab')}};
+ROUTES.symbol=v=>{const ks=Object.keys(SN);let ok=0;const items=shuffle([...ks.map(k=>[k,SN[k]]),['yok','Pil yatağı'],['yok','Duy']]);
+  v.innerHTML=head('🔣','Sembol Eşleştirme','İsimleri sürükleyip doğru sembolün kutusuna bırak. Sembolü olmayanlar için son kutu var.')+`<div id="dw"><div class="card"><div class="tray">${items.map(([k,n])=>`<div class="mchip drag" data-k="${k}">${n}</div>`).join('')}</div></div><div class="grid">${[...ks,'yok'].map(k=>`<div class="card dz slot" data-drop="${k}" style="margin:0;gap:6px">${k==='yok'?'<b>🚫 Sembolü olmayanlar</b>':sym(k)}<div class="zn tray" style="justify-content:center"></div></div>`).join('')}</div></div>`;
+  enableDrag($('#dw',v),'.mchip.drag',(it,z)=>{if(z.dataset.drop===it.dataset.k){it.classList.remove('drag');it.classList.add('tested');$('.zn',z).append(it);if(++ok===items.length){toast('🎉 Hepsi doğru!');markDone('act:symbol')}}else shk(z)})};
+ROUTES.vars=v=>{let r=0,ok=0;const R=[['Pil sayısının','Pil sayısı','Ampul sayısı'],['Ampul sayısının','Ampul sayısı','Pil sayısı']];
+  v.innerHTML=head('🎯','Değişken Sepeti','Her turda değişkenleri doğru sepete sürükle.')+'<div id="dw"></div>';const dw=$('#dw',v);
+  const round=()=>{ok=0;const [g,ind,ctl]=pick(R);dw.innerHTML=`<div class="card"><b>Tur ${r+1} / 3</b><p><b>${g}</b> ampul parlaklığına etkisi araştırılıyor.</p><div class="tray">${shuffle([['ind',ind],['dep','Ampul parlaklığı'],['ctl',ctl]]).map(([k,n])=>`<div class="mchip drag" data-k="${k}">${n}</div>`).join('')}</div></div><div class="grid">${[['ind','🎛️ Bağımsız değişken'],['dep','📏 Bağımlı değişken'],['ctl','🔒 Kontrol edilen değişken']].map(([k,n])=>`<div class="card dz basket" data-drop="${k}" style="margin:0"><h4>${n}</h4><div class="bin"></div></div>`).join('')}</div>`};
+  enableDrag(dw,'.mchip.drag',(it,z)=>{if(z.dataset.drop===it.dataset.k){it.classList.remove('drag');it.classList.add('tested');$('.bin',z).append(it);if(++ok===3){r++;toast('✅ Tur tamamlandı!');setTimeout(()=>{if(r<3)round();else{markDone('act:vars');dw.innerHTML='<div class="card" style="text-align:center"><div class="stars">🏆</div><h3>Harika! Üç turu da bitirdin.</h3><div class="row" style="justify-content:center;margin-top:12px"><button class="btn" data-go="vars">🔄 Tekrar oyna</button><button class="btn ghost" data-go="plan">📅 Programa dön</button></div></div>'}},900)}}else shk(z)});round()};
+ROUTES.cmp=v=>{let i=0,sc=0;const N=5;
+  const show=()=>{let p1=rnd(1,3),a1=rnd(1,3),p2=p1,a2=a1;if(rnd(0,1)){do p2=rnd(1,3);while(p2===p1)}else{do a2=rnd(1,3);while(a2===a1)}
+    const g1=glow(p1,a1),g2=glow(p2,a2),w=g1>g2?0:1,c=(p,a,l)=>`<div class="card" style="margin:0;text-align:center"><b>Devre ${l}</b><div class="rhtop" style="min-height:110px">${bulbs(a,56)}</div><p>🔋×${p} pil • 💡×${a} ampul</p></div>`;
+    v.innerHTML=head('⚖️','Hangisi Daha Parlak?',`Soru ${i+1} / ${N} • pil ve ampuller özdeş • puan ${sc}`)+`<div class="two">${c(p1,a1,'A')}${c(p2,a2,'B')}</div><div class="row" style="justify-content:center;margin-top:14px"><button class="btn" data-w="0">A daha parlak</button><button class="btn" data-w="1">B daha parlak</button></div><div id="fb"></div>`;lit(v,.45);
+    $$('[data-w]',v).forEach(b=>b.onclick=()=>{const ok=+b.dataset.w===w;if(ok)sc++;const cs=$$('.card',v);lit(cs[0],g1);lit(cs[1],g2);$$('[data-w]',v).forEach(x=>x.disabled=true);
+      $('#fb',v).innerHTML=`<div class="msgbox ${ok?'ok':'bad'}" style="margin-top:14px"><b>${ok?'Doğru! 🎉':'Olmadı 😕'}</b><br>${p1===p2?'Pil sayısı aynı; ampul sayısı arttıkça parlaklık azalır.':'Ampul sayısı aynı; pil sayısı arttıkça parlaklık artar.'}</div><div class="row" style="margin-top:12px"><button class="btn" id="nx">${i<N-1?'Sonraki ▸':'Bitir'}</button></div>`;
+      $('#nx',v).onclick=()=>{i++;if(i<N)show();else{markDone('act:cmp');v.innerHTML=head('🏆','Bitti!',`${sc} / ${N} doğru`)+'<div class="card" style="text-align:center"><div class="row" style="justify-content:center"><button class="btn" data-go="cmp">🔄 Tekrar oyna</button><button class="btn ghost" data-go="plan">📅 Programa dön</button></div></div>'}}})};show()};
+ROUTES.quiz=(v,p)=>{
+  let tag=p.tag||'all',n=p.n||10;
+  const TG=[['all','Hepsi'],['t1','Devre elemanları'],['t2','Semboller'],['t3','Ampul parlaklığı'],['t4','Değişkenler'],['t5','Hipotez']];
+  v.innerHTML=head('📝','Soru Bankası','Her testte sorular ve seçenekler yeniden üretilir; aynı soru kolay kolay tekrar gelmez.')+`<div class="card" id="qset"><h4>Konu</h4><div class="chips" id="tg"></div><h4 style="margin-top:14px">Soru sayısı</h4><div class="chips" id="nn"></div><div class="row" style="margin-top:16px"><button class="btn" id="qs">▶ Testi başlat</button></div></div><div class="card" id="qbox" style="display:none"></div>`;
+  const draw=()=>{$('#tg').innerHTML=TG.map(t=>`<button class="chip ${t[0]===tag?'on':''}" data-t="${t[0]}">${t[1]}</button>`).join('');$('#nn').innerHTML=[5,10,15,20].map(x=>`<button class="chip ${x===n?'on':''}" data-n="${x}">${x}</button>`).join('')};draw();
+  $('#qset').onclick=e=>{const a=e.target.closest('[data-t]'),b=e.target.closest('[data-n]');if(a){tag=a.dataset.t;draw()}if(b){n=+b.dataset.n;draw()}};
+  $('#qs').onclick=()=>{const qs=buildQuiz(n,tag);if(!qs.length)return toast('Soru üretilemedi');start(qs)};
+  function start(qs){let i=0,sc=0;const wrong=[],box=$('#qbox');$('#qset').style.display='none';box.style.display='';
+    const show=()=>{const q=qs[i];box.innerHTML=`<div class="row" style="justify-content:space-between"><b>Soru ${i+1} / ${qs.length}</b><span class="badge">✅ ${sc}</span></div><div class="bar" style="margin:8px 0"><i style="width:${i/qs.length*100}%"></i></div><div class="qtext">${esc(q.q)}</div><div class="opts">${q.o.map((o,k)=>`<button class="opt" data-k="${k}"><b>${'ABCD'[k]}</b><span>${esc(o)}</span></button>`).join('')}</div><div id="fb"></div>`;
+      let ans=false;$$('.opt',box).forEach(b=>b.onclick=()=>{if(ans)return;ans=true;const k=+b.dataset.k,ok=k===q.a;
+        $$('.opt',box)[q.a].classList.add('right');if(!ok){b.classList.add('wrong');wrong.push(q)}else sc++;
+        $('#fb').innerHTML=`<div class="msgbox ${ok?'ok':'bad'}" style="margin-top:14px"><b>${ok?'Doğru! 🎉':'Yanlış 😕'}</b><br>${esc(q.e||'')}</div><div class="row" style="margin-top:12px"><button class="btn" id="nx">${i<qs.length-1?'Sonraki ▸':'Sonucu gör'}</button>${ok?'':'<button class="btn ghost" id="ask">✨ Yapay zekaya sor</button>'}</div>`;
+        $('#nx').onclick=()=>{i++;i<qs.length?show():end()};const ak=$('#ask');if(ak)ak.onclick=()=>openChat(`Şu soruyu çözemedim, basitçe açıklar mısın?\n${q.q}\nSeçenekler: ${q.o.join(' / ')}\nDoğru cevap: ${q.o[q.a]}`,true)})};
+    const end=()=>{const pct=Math.round(sc/qs.length*100);const best=store.get('best_'+tag,0);if(pct>best)store.set('best_'+tag,pct);markDone('quiz:'+tag);
+      box.innerHTML=`<div style="text-align:center"><div class="stars">${pct>=90?'🏆':pct>=70?'⭐⭐⭐':pct>=50?'⭐⭐':'⭐'}</div><h3>${sc} / ${qs.length} doğru (%${pct})</h3><p style="color:var(--muted)">En iyi skorun: %${Math.max(best,pct)}</p>${wrong.length?`<div style="text-align:left;margin-top:14px"><h4>Tekrar etmen gerekenler</h4>${wrong.map(q=>`<div class="msgbox" style="margin:8px 0"><b>${esc(q.q)}</b><br>✔ ${esc(q.o[q.a])}<br><small>${esc(q.e||'')}</small></div>`).join('')}</div>`:'<p>Hiç yanlışın yok, harika! 👏</p>'}<div class="row" style="justify-content:center;margin-top:14px"><button class="btn" id="again">🔄 Yeni test (farklı sorular)</button><button class="btn ghost" data-go="plan">📅 Programa dön</button></div></div>`;
+      $('#again').onclick=()=>start(buildQuiz(n,tag))};
+    show()}}
+
+
+ROUTES.guide=v=>{v.innerHTML=head('ℹ️','Nasıl Kullanılır?','Kısa kılavuz')+`<div class="card"><ul style="line-height:1.9;padding-left:20px;margin:0"><li>☰ menüden tüm bölümlere ulaşırsın; üstteki çubuk ilerlemeni gösterir.</li><li>📅 Çalışma programındaki görevler bitince kendiliğinden işaretlenir.</li><li>🎧 Konularda sesli mini ders var; hızını seçebilirsin.</li><li>🖱️ Etkinliklerde öğeleri fare, parmak ya da e-kalemle sürükle.</li><li>📝 Soru bankasında her testte sorular ve şıklar yeniden üretilir.</li><li>✏️ Turuncu düğme e-kalemle ekrana yazmanı sağlar.</li><li>✨ Gemini simgesi yapay zekâ asistanını açar.</li></ul></div>`};
+/* ================= SES ================= */
+const hasTTS='speechSynthesis' in window;
+function spk(s){return(s[1]+'. '+s[2]).replace(/Ω/g,'omega').replace(/>/g,' büyüktür ').replace(/[()]/g,'').replace(/–/g,' ile ')}
+/* ElevenLabs (Duygu Eris sesi) */
+const EL={audio:null,cache:new Map(),tok:0,warned:false};
+const elCfg=()=>({key:store.get('elKey',''),voice:store.get('elVoice',''),on:store.get('elOn',true)});
+const elReady=()=>{const c=elCfg();return !!(c.key&&c.voice&&c.on)};
+function stopSpeak(){if(hasTTS)speechSynthesis.cancel();if(EL.audio){EL.audio.onended=null;EL.audio.onerror=null;EL.audio.pause();EL.audio=null}EL.tok++}
+async function elErr(r){let m='HTTP '+r.status;try{const j=await r.json();const d=j.detail;m=(d&&(d.message||d.status))||(typeof d==='string'?d:m)}catch(e){}return m}
+async function elFetch(text){
+  const c=elCfg(),ck=c.voice+'|'+text;if(EL.cache.has(ck))return EL.cache.get(ck);
+  const r=await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(c.voice)}?output_format=mp3_44100_64`,{method:'POST',headers:{'xi-api-key':c.key,'Content-Type':'application/json',Accept:'audio/mpeg'},body:JSON.stringify({text,model_id:'eleven_multilingual_v2',voice_settings:{stability:.5,similarity_boost:.75}})});
+  if(!r.ok)throw new Error(await elErr(r));
+  const url=URL.createObjectURL(await r.blob());EL.cache.set(ck,url);return url}
+function speak(text,rate,cb){
+  if(elReady()){
+    stopSpeak();const my=EL.tok;
+    elFetch(text).then(url=>{if(my!==EL.tok)return;const a=new Audio(url);a.playbackRate=rate||1;EL.audio=a;a.onended=()=>{EL.audio=null;cb&&cb()};
+      a.onerror=()=>{if(my===EL.tok)browserSpeak(text,rate,cb)};a.play().catch(()=>{if(my===EL.tok)browserSpeak(text,rate,cb)})})
+    .catch(e=>{if(my!==EL.tok)return;if(!EL.warned){EL.warned=true;toast('ElevenLabs hatası: '+e.message+' • şimdilik tarayıcı sesi kullanılıyor')}browserSpeak(text,rate,cb)});
+    return}
+  browserSpeak(text,rate,cb)}
+function browserSpeak(text,rate,cb){
+  if(!hasTTS){setTimeout(()=>cb&&cb(),Math.max(2500,text.length*60/rate));return}
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);u.lang='tr-TR';u.rate=rate||1;
+  const v=speechSynthesis.getVoices().find(v=>/^tr/i.test(v.lang));if(v)u.voice=v;
+  u.onend=()=>cb&&cb();u.onerror=e=>{if(e.error!=='canceled'&&e.error!=='interrupted')cb&&cb()};
+  setTimeout(()=>speechSynthesis.speak(u),60)}
+
+/* ================= SOHBET / YAPAY ZEKA ================= */
+const chat={hist:[],busy:false,q:null};
+const fmt=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`(.+?)`/g,'<code>$1</code>').replace(/\n/g,'<br>');
+function renderChats(){$$('.chatmsgs').forEach(b=>{b.innerHTML=chat.hist.map(m=>`<div class="msg ${m.role}">${fmt(m.text)}</div>`).join('')+(chat.busy?'<div class="msg ai"><div class="typing"><i></i><i></i><i></i></div></div>':'');b.scrollTop=b.scrollHeight})}
+const GUIDE='👋 **Merhaba! Ben yapay zeka asistanınım.**\n\n**Nasıl kullanılır?**\n1️⃣ Aşağıdaki kutuya sorunu yaz ve ➤ ile gönder.\n2️⃣ Üstteki hazır düğmelerle “basitçe anlat”, “soru sor” veya “ipucu ver” isteyebilirsin.\n3️⃣ Şu an bulunduğun bölümü bildiğim için ona göre cevap veririm.\n\n🔑 Daha akıllı cevaplar için ☰ menü → **Yapay Zekaya Sor** bölümünden Gemini API anahtarını ekle. Anahtar yoksa ünite bilgisiyle çalışan yerel yardımcı cevap verir.';
+function updateChatMode(){$('#chatMode').textContent=store.get('apiKey','')?'Gemini bağlı ✓':'Yerel yardımcı (Gemini için API anahtarı ekle)'}
+function refreshChatCtx(){const q=$('#quick');const base=['Bunu basitçe anlat','Bana soru sor','İpucu ver','Günlük hayattan örnek'];q.innerHTML=base.map(b=>`<button>${b}</button>`).join('')}
+function openChat(prefill,send){
+  $('#chat').classList.add('on');updateChatMode();
+  if(!chat.hist.length||!store.get('guideSeen',false)){if(!chat.hist.length)chat.hist.push({role:'sys',text:GUIDE});store.set('guideSeen',true)}
+  renderChats();if(prefill){if(send)sendMsg(prefill);else{$('#chat textarea').value=prefill}}setTimeout(()=>$('#chat textarea').focus(),250)}
+function ctx(){let c=`Öğrenci şu anda uygulamada "${titleOf()}" bölümünde.`;if(cur.id==='topic'){const T=TOPICS.find(t=>t.id===cur.p.id);if(T)c+=' Bu konunun içeriği: '+T.slides.map(s=>s[1]+': '+s[2]).join(' ')}return c}
+async function askGemini(text){
+  const key=String(store.get('apiKey','')).replace(/[\s"'“”]/g,'');
+  if(!key)throw new Error('API anahtarı girilmemiş');
+  const first=String(store.get('model','gemini-2.5-flash')||'gemini-2.5-flash').trim();
+  const sys=`Sen Fen Bilimleri dersinde yardımcı, sabırlı ve cana yakın bir öğretmen asistanısın. Yalnızca Türkçe, kısa ve sade cevap ver (en fazla 6-7 cümle). Öğrenci bir çocuk; çok sade anlat. Cevaplarını aşağıdaki ünite bilgilerine dayandır; ünite dışına çıkman gerekirse bunu belirt. Doğrudan cevabı vermek yerine mümkünse önce ipucu ver. Emoji kullanabilirsin.\n\nÜNİTE BİLGİSİ:\n${UNIT_TEXT}\n\nBAĞLAM: ${ctx()}`;
+  let msgs=chat.hist.filter(m=>m.role!=='sys').slice(-10);while(msgs.length&&msgs[0].role!=='user')msgs.shift();
+  const mk=m=>{const gc={temperature:.6,maxOutputTokens:2048};
+    if(/gemini-2\.5-flash/.test(m)&&!/pro/.test(m))gc.thinkingConfig={thinkingBudget:0};
+    return {systemInstruction:{parts:[{text:sys}]},contents:msgs.map(x=>({role:x.role==='user'?'user':'model',parts:[{text:x.text}]})),generationConfig:gc}};
+  let last='';const tried=new Set();
+  async function attempt(m){
+    tried.add(m);let r,j;
+    try{r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify(mk(m))});j=await r.json().catch(()=>({}))}
+    catch(e){throw new Error('Google’a bağlanılamadı (internet/ağ engeli?): '+e.message)}
+    if(r.ok){const c=j.candidates&&j.candidates[0];const t=((c&&c.content&&c.content.parts)||[]).map(p=>p.text||'').join('').trim();
+      if(t){store.set('model',m);return t}
+      last=(j.promptFeedback&&j.promptFeedback.blockReason)?'İstek güvenlik filtresine takıldı ('+j.promptFeedback.blockReason+')':'Model boş cevap döndürdü ('+m+', '+((c&&c.finishReason)||'?')+')';return null}
+    const msg=(j.error&&j.error.message)||('HTTP '+r.status);last=m+': '+msg;
+    if(/API key|API_KEY/i.test(msg)&&r.status!==429)throw new Error('API anahtarı geçersiz veya yanlış kopyalanmış. ('+msg+')');
+    return null}
+  for(const m of [...new Set([first,'gemini-2.5-flash','gemini-2.0-flash','gemini-flash-latest'])]){const t=await attempt(m);if(t)return t}
+  try{const lr=await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=100',{headers:{'x-goog-api-key':key}});
+    if(lr.ok){const ms=((await lr.json()).models||[]).filter(x=>(x.supportedGenerationMethods||[]).includes('generateContent')).map(x=>x.name.replace('models/','')).filter(n=>/flash/.test(n)&&!/image|tts|live|audio|embed|thinking|exp/.test(n)&&!tried.has(n)).slice(0,4);
+      for(const m of ms){const t=await attempt(m);if(t)return t}}}catch(e){if(/API anahtarı/.test(e.message))throw e}
+  throw new Error(last||'Model bulunamadı')}
+async function sendMsg(text){
+  text=text.trim();if(!text||chat.busy)return;chat.hist.push({role:'user',text});chat.busy=true;renderChats();let ans;
+  try{if(store.get('apiKey',''))ans=await askGemini(text);else{await new Promise(r=>setTimeout(r,350));ans=localAI(text)}}
+  catch(e){ans='⚠️ Gemini’ye ulaşılamadı: '+e.message+'\n\nŞimdilik yerel yardımcıyla cevaplıyorum:\n\n'+localAI(text)}
+  chat.hist.push({role:'ai',text:ans});chat.busy=false;renderChats()}
+
+/* yerel basit yapay zeka */
+const KB=[
+[['elektrik devresi','devre nedir'],'**Elektrik devresi**, elektrik enerjisinin iletilmesini sağlayan ve devre elemanlarından oluşan sistemdir. Basit bir devrede pil, ampul, anahtar ve bağlantı kablosu bulunur.'],
+[['pilin gorev','pil nedir','devre eleman','ampul nedir','anahtar nedir','kablo'],'**Pil** enerji sağlar, **ampul** ışık verir, **anahtar** devreyi açıp kapatır, **bağlantı kablosu** elemanları birbirine bağlar. Pil yatağı ve duy yardımcı elemanlardır.'],
+[['acik devre','kapali devre','anahtar acik','anahtar kapali'],'Anahtar **kapalıyken** devre tamamlanır ve ampul ışık verir (kapalı devre). Anahtar **açıkken** bağlantı kesilir ve ampul ışık vermez (açık devre).'],
+[['sembol','pil yatagi','duy'],'Pil: uzun (+) ve kısa (−) iki paralel çizgi. Ampul: çarpılı daire. Kablo: düz çizgi. Anahtarın açık ve kapalı sembolleri ayrıdır. **Pil yatağı ve duyun sembolü yoktur.**'],
+[['devre semasi','sema'],'**Devre şeması**, devrenin eleman sembolleriyle çizilmesidir. Eleman sayısı ve bağlantılar gerçek devreyle aynı olmalıdır.'],
+[['pil sayisi','daha cok pil'],'Ampul sayısı sabitken **pil sayısı artarsa ampul parlaklığı artar.**'],
+[['ampul sayisi','daha cok ampul'],'Pil sayısı sabitken **ampul sayısı artarsa ampullerin parlaklığı azalır.**'],
+[['bagimsiz','bagimli','kontrol edilen','degisken'],'**Bağımsız:** araştırmacının değiştirdiği (örn. pil sayısı). **Bağımlı:** ona bağlı değişen (ampul parlaklığı). **Kontrol edilen:** sabit tutulan (örn. ampul sayısı).'],
+[['hipotez','tahmin'],'**Hipotez**, deneyle test edilebilen tahmindir. Örnek: “Pil sayısını artırırsam ampul parlaklığı artar.”'],
+[['livermore','1901','rekor'],'Amerika’daki Livermore İtfaiye İstasyonunda bir ampul **1901’den beri** yanıyor ve Guinness Rekorlar Kitabı’na girdi. Bugün ilk zamanına göre daha az ışık veriyor.']];
+function localAI(t){const n=norm(t);
+  if(chat.q&&/^\s*[a-d]\s*$/i.test(t)){const q=chat.q;chat.q=null;const k='abcd'.indexOf(t.trim().toLowerCase());return k===q.a?`✅ Doğru! ${q.e}`:`❌ Olmadı. Doğru cevap: **${'ABCD'[q.a]}) ${q.o[q.a]}**\n${q.e}`}
+  if(/soru sor|soru ver|beni test|test et/.test(n)){const T=cur.id==='topic'?cur.p.id:'all';const q=buildQuiz(1,T)[0]||buildQuiz(1,'all')[0];chat.q=q;return `Hadi bakalım! 🧠\n\n**${q.q}**\n\n${q.o.map((o,i)=>'ABCD'[i]+') '+o).join('\n')}\n\nCevabını A, B, C veya D olarak yaz.`}
+  if(/ipucu/.test(n))return '💡 İpucu: '+({lab:'Pili artırınca parlaklık artar, ampulü artırınca azalır.',symbol:'Pilde uzun çizgi artı kutuptur. Pil yatağı ve duyun sembolü yoktur.',vars:'Değiştirdiğin bağımsız, ölçtüğün bağımlı, sabit tuttuğun kontrol edilen değişkendir.',cmp:'Önce hangisinin sabit olduğuna bak: pil mi, ampul mü?'}[cur.id]||'Pil sayısı artarsa parlaklık artar; ampul sayısı artarsa azalır.');
+  if(/anlat|ozet|basit/.test(n)&&cur.id==='topic'){const T=TOPICS.find(x=>x.id===cur.p.id);return `**${T.title}** kısaca:\n`+T.slides.map(s=>'• **'+s[1]+':** '+s[2]).join('\n')}
+  let best=null,bs=0;KB.forEach(([ks,a])=>{let s=0;ks.forEach(k=>{if(n.includes(k))s+=k.length});if(s>bs){bs=s;best=a}});
+  return best||'Bunu yerel yardımcı tam anlayamadı 🤔 “elektrik devresi nedir?”, “açık devre”, “semboller”, “pil sayısı”, “bağımsız değişken” ya da “soru sor” yazabilirsin.'}
+function mountChat(root){
+  root.innerHTML=`<div class="chatmsgs"></div><form class="cin"><textarea placeholder="Sorunu yaz…" rows="1"></textarea><button type="submit">➤</button></form>`;
+  const f=$('form',root),ta=$('textarea',root);f.onsubmit=e=>{e.preventDefault();const t=ta.value;ta.value='';sendMsg(t)};ta.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();f.requestSubmit()}};renderChats()}
+ROUTES.ai=v=>{
+  const key=store.get('apiKey',''),model=store.get('model','gemini-2.5-flash');
+  v.innerHTML=head('🤖','Yapay Zekaya Sor','Gemini bağlantısı dosyadaki API anahtarıyla kurulur; buradan da değiştirebilirsin.')+
+  `<div class="card"><h3>🔑 Gemini bağlantısı <span class="badge" id="gst" style="background:${key?'rgba(22,163,74,.15);color:#15803d':'rgba(245,158,11,.18)'}">${key?'Bağlı ✓':'Bağlı değil'}</span></h3>
+  <p style="margin-bottom:12px;font-size:14px;color:var(--muted)">Anahtarı <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> adresinden ücretsiz alabilirsin. Anahtar yalnızca bu tarayıcıda saklanır ve sadece Google’a gönderilir.</p>
+  <div class="row" style="margin-bottom:10px"><input type="password" id="ak" placeholder="Gemini API anahtarı (AIza…)" value="${esc(key)}" style="flex:1;min-width:220px"><button class="btn ghost sm" id="eye">👁</button></div>
+  <div class="row" style="margin-bottom:12px"><input type="text" id="am" list="ml" value="${esc(model)}" style="max-width:260px"><datalist id="ml"><option value="gemini-2.5-flash"><option value="gemini-2.5-flash-lite"><option value="gemini-2.0-flash"><option value="gemini-flash-latest"></datalist><span style="font-size:13px;color:var(--muted)">Model (değiştirmen gerekmez)</span></div>
+  <div class="row"><button class="btn" id="asave">💾 Kaydet ve test et</button><button class="btn ghost" id="adel">🗑 Anahtarı sil</button></div><div id="atest" class="msgbox" style="display:none;margin-top:12px"></div></div>
+  <div class="card"><h3>💬 Sohbet</h3><div class="bigchat" id="big"></div></div>`;
+  mountChat($('#big',v));
+  $('#ak',v).oninput=e=>{store.set('apiKey',e.target.value.replace(/[\s"'“”]/g,''));updateChatMode()};
+  $('#eye',v).onclick=()=>{const i=$('#ak',v);i.type=i.type==='password'?'text':'password'};
+  $('#asave',v).onclick=async()=>{const k=$('#ak',v).value.trim(),m=$('#am',v).value.trim()||'gemini-2.5-flash';store.set('apiKey',k);store.set('model',m);updateChatMode();const t=$('#atest',v);t.style.display='';
+    if(!k){t.className='msgbox warn';t.textContent='Anahtar boş: yerel yardımcı kullanılacak.';$('#gst',v).textContent='Bağlı değil';return}
+    t.className='msgbox';t.textContent='Test ediliyor…';
+    const bak=chat.hist;try{chat.hist=[{role:'user',text:'Sadece “Hazırım!” yaz.'}];const r=await askGemini('');t.className='msgbox ok';t.innerHTML='✅ Bağlantı başarılı! Gemini diyor ki: '+esc(r);$('#gst',v).textContent='Bağlı ✓'}
+    catch(e){t.className='msgbox bad';t.textContent='❌ Bağlanamadı: '+e.message}finally{chat.hist=bak}};
+  $('#adel',v).onclick=()=>{store.set('apiKey','');$('#ak',v).value='';updateChatMode();$('#gst',v).textContent='Bağlı değil';toast('Anahtar silindi')}}
+
+/* --- Ses ayarı (ElevenLabs) --- */
+ROUTES.voice=v=>{
+  const c=elCfg();
+  v.innerHTML=head('🎙️','Ses Ayarı: Duygu Eris','Sesli mini dersler ElevenLabs’teki Duygu Eris sesiyle okunur.')+
+  `<div class="card"><h3>🔑 ElevenLabs bağlantısı <span class="badge" id="vst" style="background:${elReady()?'rgba(22,163,74,.15);color:#15803d':'rgba(245,158,11,.18)'}">${elReady()?'Aktif ✓':'Kapalı'}</span></h3>
+  <p style="margin-bottom:12px;font-size:14px;color:var(--muted)">API anahtarını <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">elevenlabs.io → API Keys</a> sayfasından alırsın (anahtara “Text to Speech” ve “Voices: Read/Write” izni ver). Anahtar yalnızca bu tarayıcıda saklanır. Kütüphane seslerini API ile kullanmak için ElevenLabs’te ücretli plan gerekebilir.</p>
+  <div class="row" style="margin-bottom:10px"><input type="password" id="ek" placeholder="ElevenLabs API anahtarı" value="${esc(c.key)}" style="flex:1;min-width:220px"><button class="btn ghost sm" id="eeye">👁</button></div>
+  <div class="row" style="margin-bottom:12px"><input type="text" id="ev" placeholder="Ses kimliği (voice ID) – otomatik bulunur" value="${esc(c.voice)}" style="flex:1;min-width:220px"><span id="evn" style="font-size:13px;color:var(--muted)">${esc(store.get('elName',''))}</span></div>
+  <div class="row"><button class="btn" id="efind">🔍 Duygu Eris’i bul</button><button class="btn ghost" id="etest">🔊 Sesi dene</button><button class="btn ghost" id="etog">${c.on?'⏸ Geçici kapat':'▶ Aç'}</button><button class="btn ghost" id="edel">🗑 Sil</button></div>
+  <div id="emsg" class="msgbox" style="display:none;margin-top:12px"></div><div id="elist"></div></div>`;
+  const msg=(t,k)=>{const m=$('#emsg',v);m.style.display='';m.className='msgbox '+(k||'');m.innerHTML=t};
+  const save=()=>{store.set('elKey',$('#ek',v).value.trim());store.set('elVoice',$('#ev',v).value.trim())};
+  const H=()=>({'xi-api-key':$('#ek',v).value.trim()});
+  const useVoice=(id,name)=>{$('#ev',v).value=id;store.set('elVoice',id);store.set('elName',name||'');$('#evn',v).textContent=name||'';save();$('#vst',v).textContent=elReady()?'Aktif ✓':'Kapalı'};
+  $('#eeye',v).onclick=()=>{const i=$('#ek',v);i.type=i.type==='password'?'text':'password'};
+  $('#efind',v).onclick=async()=>{
+    save();if(!$('#ek',v).value.trim())return msg('Önce API anahtarını gir.','warn');
+    msg('Aranıyor…');$('#elist',v).innerHTML='';
+    try{
+      let r=await fetch('https://api.elevenlabs.io/v1/voices',{headers:H()});
+      if(!r.ok)throw new Error(await elErr(r));
+      const mine=((await r.json()).voices||[]).find(x=>norm(x.name).includes('duygu'));
+      if(mine){useVoice(mine.voice_id,mine.name);return msg(`✅ <b>${esc(mine.name)}</b> sesi hesabında bulundu ve seçildi. “Sesi dene” ile dinleyebilirsin.`,'ok')}
+      r=await fetch('https://api.elevenlabs.io/v1/shared-voices?page_size=20&search='+encodeURIComponent('Duygu Eris'),{headers:H()});
+      if(!r.ok)throw new Error(await elErr(r));
+      let list=(await r.json()).voices||[];
+      if(!list.length){r=await fetch('https://api.elevenlabs.io/v1/shared-voices?page_size=20&search=Duygu',{headers:H()});if(r.ok)list=(await r.json()).voices||[]}
+      if(!list.length)return msg('Kütüphanede “Duygu Eris” bulunamadı. ElevenLabs’te sesin kimliğini (voice ID) kopyalayıp yukarıdaki kutuya yapıştırabilirsin.','warn');
+      msg('Kütüphanede bulunan sesler: Dinleyip birini seç. Seçince hesabına eklenir.');
+      $('#elist',v).innerHTML=list.map((x,i)=>`<div class="msgbox" style="margin-top:10px"><b>${esc(x.name)}</b> <small>${esc([x.language,x.gender,x.accent].filter(Boolean).join(' • '))}</small>${x.preview_url?`<br><audio controls preload="none" src="${esc(x.preview_url)}" style="width:100%;margin-top:6px"></audio>`:''}<div class="row" style="margin-top:8px"><button class="btn sm" data-i="${i}">Bu sesi kullan</button></div></div>`).join('');
+      $$('[data-i]',$('#elist',v)).forEach(b=>b.onclick=async()=>{const x=list[+b.dataset.i];msg('Ses hesabına ekleniyor…');
+        try{const rr=await fetch(`https://api.elevenlabs.io/v1/voices/add/${encodeURIComponent(x.public_owner_id)}/${encodeURIComponent(x.voice_id)}`,{method:'POST',headers:{...H(),'Content-Type':'application/json'},body:JSON.stringify({new_name:x.name})});
+          if(!rr.ok)throw new Error(await elErr(rr));
+          const j=await rr.json();useVoice(j.voice_id||x.voice_id,x.name);msg(`✅ <b>${esc(x.name)}</b> eklendi ve seçildi.`,'ok')}
+        catch(e){useVoice(x.voice_id,x.name);msg('Hesaba eklenemedi ('+esc(e.message)+'). Yine de bu sesle denenecek; olmazsa ElevenLabs’te sesi “My Voices”a ekleyip kimliğini buraya yapıştır.','warn')}})
+    }catch(e){msg('❌ '+esc(e.message),'bad')}};
+  $('#etest',v).onclick=()=>{save();if(!$('#ek',v).value.trim()||!$('#ev',v).value.trim())return msg('Önce anahtarı gir ve sesi bul.','warn');
+    store.set('elOn',true);$('#etog',v).textContent='⏸ Geçici kapat';EL.warned=false;msg('Ses üretiliyor…');
+    stopSpeak();const my=EL.tok;
+    elFetch('Merhaba! Ben bu dersin sesiyim. Elektrik devresi, elektrik enerjisinin iletilmesini sağlayan ve devre elemanlarından oluşan sistemdir.').then(u=>{if(my!==EL.tok)return;const a=new Audio(u);EL.audio=a;a.play();msg('✅ Çalıyor! Ses tamam ise mini derslerde otomatik kullanılacak.','ok');$('#vst',v).textContent='Aktif ✓'}).catch(e=>msg('❌ '+esc(e.message),'bad'))};
+  $('#etog',v).onclick=()=>{store.set('elOn',!elCfg().on);ROUTES.voice(v)};
+  $('#edel',v).onclick=()=>{store.set('elKey','');store.set('elVoice','');store.set('elName','');EL.cache.clear();ROUTES.voice(v);toast('ElevenLabs bilgileri silindi')}}
+
+/* ================= E-KALEM ================= */
+const pen={on:false,tool:'pen',color:'#e11d48',size:4,only:false,strokes:[],cur:null,seen:false};
+const cv=$('#penCanvas'),cx=cv.getContext('2d');
+function sizeCv(){const d=devicePixelRatio||1;cv.width=innerWidth*d;cv.height=innerHeight*d;cx.setTransform(d,0,0,d,0,0);redraw()}
+function segW(s,p){return s.pen&&p.p>0?s.w*(.35+p.p*1.3):s.w}
+function drawStroke(s,from){
+  cx.save();cx.lineCap='round';cx.lineJoin='round';cx.strokeStyle=s.color;cx.fillStyle=s.color;
+  if(s.erase)cx.globalCompositeOperation='destination-out';
+  const e=s.erase?s.w*4:1;
+  if(s.pts.length===1){const p=s.pts[0];cx.beginPath();cx.arc(p.x,p.y,segW(s,p)*e/2,0,7);cx.fill()}
+  for(let i=Math.max(1,from||1);i<s.pts.length;i++){const a=s.pts[i-1],b=s.pts[i];cx.lineWidth=segW(s,b)*e;cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.stroke()}
+  cx.restore()}
+function redraw(){cx.clearRect(0,0,innerWidth,innerHeight);pen.strokes.forEach(s=>drawStroke(s))}
+function clearPen(){pen.strokes=[];pen.cur=null;redraw()}
+function applyPE(){cv.style.pointerEvents=(pen.on&&pen.tool!=='hand')?'auto':'none';cv.style.cursor=pen.tool==='eraser'?'cell':'crosshair'}
+cv.addEventListener('pointerdown',e=>{
+  if(pen.only&&e.pointerType!=='pen'){cv.style.pointerEvents='none';const el=document.elementFromPoint(e.clientX,e.clientY);if(el&&el.click)el.click();return}
+  e.preventDefault();cv.setPointerCapture(e.pointerId);
+  const isPen=e.pointerType==='pen';
+  pen.cur={pts:[{x:e.clientX,y:e.clientY,p:isPen?e.pressure:.5}],color:pen.color,w:pen.size,erase:pen.tool==='eraser',pen:isPen};drawStroke(pen.cur)});
+cv.addEventListener('pointermove',e=>{if(!pen.cur)return;const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];const from=pen.cur.pts.length;
+  (evs.length?evs:[e]).forEach(ev=>pen.cur.pts.push({x:ev.clientX,y:ev.clientY,p:pen.cur.pen?ev.pressure:.5}));drawStroke(pen.cur,from)});
+const endStroke=()=>{if(pen.cur){pen.strokes.push(pen.cur);pen.cur=null}};
+cv.addEventListener('pointerup',endStroke);cv.addEventListener('pointercancel',endStroke);
+addEventListener('pointermove',e=>{if(pen.on&&pen.only&&pen.tool!=='hand'&&e.pointerType==='pen'&&cv.style.pointerEvents!=='auto')cv.style.pointerEvents='auto'},true);
+addEventListener('pointerdown',e=>{if(e.pointerType==='pen'&&!pen.on&&!pen.seen){pen.seen=true;toast('✏️ E-kalem algılandı!','Kalem modunu aç',()=>setPen(true))}},true);
+function setPen(on){pen.on=on;$('#penBar').classList.toggle('on',on);$('#penFab').classList.toggle('on',on);applyPE()}
+$('#penFab').onclick=()=>setPen(!pen.on);$('#penClose').onclick=()=>setPen(false);
+$('#penBar').addEventListener('click',e=>{
+  const t=e.target.closest('[data-tool]'),c=e.target.closest('[data-c]');
+  if(t){pen.tool=t.dataset.tool;$$('[data-tool]').forEach(b=>b.classList.toggle('on',b===t));applyPE()}
+  if(c){pen.color=c.dataset.c;pen.tool='pen';$$('[data-c]').forEach(b=>b.classList.toggle('on',b===c));$$('[data-tool]').forEach(b=>b.classList.toggle('on',b.dataset.tool==='pen'));applyPE()}});
+$('#penSize').oninput=e=>pen.size=+e.target.value;
+$('#penOnly').onchange=e=>{pen.only=e.target.checked;applyPE();toast(pen.only?'Sadece e-kalem çizecek; parmak ve fare sayfayı kullanır':'Parmak ve fare de çizebilir')};
+$('#penUndo').onclick=()=>{pen.strokes.pop();redraw()};$('#penClear').onclick=clearPen;
+addEventListener('resize',sizeCv);
+
+/* ================= GENEL OLAYLAR ================= */
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');if(g){let p={};try{p=JSON.parse(g.dataset.gp||'{}')}catch(_){}go(g.dataset.go,p);return}
+  const n=e.target.closest('.ni');if(n){let p={};try{p=JSON.parse(n.dataset.p||'{}')}catch(_){}go(n.dataset.id,p)}});
+$('#menuBtn').onclick=()=>openDrawer(true);$('#scrim').onclick=()=>openDrawer(false);
+function setTheme(t){document.documentElement.dataset.theme=t;$('#themeBtn').textContent=t==='dark'?'☀️':'🌙';store.set('theme',t)}
+$('#themeBtn').onclick=()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
+$('#gemFab').onclick=()=>$('#chat').classList.contains('on')?$('#chat').classList.remove('on'):openChat();
+$('#chatClose').onclick=()=>$('#chat').classList.remove('on');
+$('#chatInfo').onclick=()=>{chat.hist.push({role:'sys',text:GUIDE});renderChats()};
+$('#quick').onclick=e=>{const b=e.target.closest('button');if(b)sendMsg(b.textContent)};
+{const f=$('#chat form'),ta=$('#chat textarea');f.onsubmit=e=>{e.preventDefault();const t=ta.value;ta.value='';sendMsg(t)};ta.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();f.requestSubmit()}}}
+function showWelcome(){
+  const m=document.createElement('div');m.className='modal';
+  m.innerHTML=`<div class="card"><h2>⚡ Hoş geldin!</h2><p style="color:var(--muted);margin:6px 0 10px">Fen Bilimleri • 6. Ünite: Yaşamımızdaki Elektrik</p><ul style="padding-left:20px;margin:0"><li>☰ <b>Menü</b> (sol üst): tüm bölümler burada.</li><li>🎧 Konularda <b>sesli mini ders</b> ve video var.</li><li>🖱️ Deneylerde öğeleri <b>sürükleyip bırak</b>; fare, parmak ya da e-kalemle.</li><li>📝 Testlerde <b>her seferinde farklı sorular</b> gelir.</li><li>✏️ Sağ alttaki turuncu düğme <b>e-kalem</b> ile ekrana yazmanı sağlar.</li><li>✨ Gemini simgesi <b>yapay zeka sohbetini</b> açar (API anahtarı için ☰ → Yapay Zekaya Sor).</li></ul><div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn" id="wok">Başlayalım 🚀</button></div></div>`;
+  document.body.appendChild(m);$('#wok',m).onclick=()=>{m.remove();store.set('welcomed',true)}}
+
+/* başlat */
+setTheme(store.get('theme','light'));
+if(hasTTS)speechSynthesis.getVoices();
+sizeCv();updateProgress();refreshChatCtx();updateChatMode();buildNav();go('home');
+if(!store.get('welcomed',false))showWelcome();
+</script>
+</body>
+</html>
